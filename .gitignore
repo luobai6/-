@@ -1,0 +1,33 @@
+# Unity generated folders (project is stored in a subfolder)
+Mountains And Rivers/[Ll]ibrary/
+Mountains And Rivers/[Tt]emp/
+Mountains And Rivers/[Oo]bj/
+Mountains And Rivers/[Bb]uild/
+Mountains And Rivers/[Bb]uilds/
+Mountains And Rivers/[Ll]ogs/
+Mountains And Rivers/[Uu]ser[Ss]ettings/
+Mountains And Rivers/[Mm]emoryCaptures/
+Mountains And Rivers/[Rr]ecordings/
+
+# IDE and editor-generated files
+Mountains And Rivers/.vs/
+Mountains And Rivers/.vscode/
+Mountains And Rivers/.idea/
+Mountains And Rivers/*.csproj
+Mountains And Rivers/*.sln
+Mountains And Rivers/*.suo
+Mountains And Rivers/*.tmp
+Mountains And Rivers/*.user
+Mountains And Rivers/*.userprefs
+Mountains And Rivers/*.pidb
+Mountains And Rivers/*.booproj
+Mountains And Rivers/*.svd
+Mountains And Rivers/*.pdb
+Mountains And Rivers/*.mdb
+Mountains And Rivers/*.opendb
+Mountains And Rivers/*.VC.db
+
+# Unity crash reports and OS metadata
+Mountains And Rivers/sysinfo.txt
+Mountains And Rivers/crashlytics-build.properties
+.DS_Store
