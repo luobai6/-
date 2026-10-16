@@ -1,0 +1,45 @@
+<style>
+  .calm-fog{max-width:960px;margin:0 auto;padding:8px 0 24px;color:#25342f}
+  .calm-fog h2{margin-bottom:4px}
+  .calm-stage{position:relative;min-height:560px;overflow:hidden;border-radius:18px;background:linear-gradient(180deg,#b9cfcb 0%,#dce3d8 49%,#d2c6aa 100%);box-shadow:0 12px 36px rgba(36,52,47,.18)}
+  .calm-stage:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(247,241,220,.05),transparent 55%,rgba(90,103,86,.1));pointer-events:none}
+  .mountain{position:absolute;object-fit:contain;transform-origin:50% 100%;filter:saturate(.8) contrast(.96)}
+  .mountain.back{width:63%;left:20%;top:0;opacity:.58}
+  .mountain.mid{width:76%;left:3%;top:22%;opacity:.8}
+  .mountain.front{width:108%;left:-5%;bottom:-5%;opacity:1}
+  .fog-layer{position:absolute;left:-30%;width:160%;pointer-events:none;mix-blend-mode:screen;will-change:transform,opacity}
+  .fog-layer:before,.fog-layer:after{content:"";position:absolute;inset:0;filter:blur(10px)}
+  .fog-back{height:105px;top:31%;opacity:.34;animation:float-back 42s ease-in-out infinite alternate}
+  .fog-back:before{background:radial-gradient(ellipse at 8% 55%,rgba(239,243,230,.7) 0 6%,transparent 20%),radial-gradient(ellipse at 27% 45%,rgba(247,245,227,.72) 0 8%,transparent 23%),radial-gradient(ellipse at 52% 58%,rgba(236,242,228,.63) 0 9%,transparent 24%),radial-gradient(ellipse at 76% 46%,rgba(248,246,232,.7) 0 7%,transparent 23%),radial-gradient(ellipse at 94% 59%,rgba(235,241,228,.62) 0 7%,transparent 20%)}
+  .fog-back:after{inset:30% 4%;background:linear-gradient(90deg,transparent 0%,rgba(244,246,232,.34) 18%,rgba(248,245,228,.62) 47%,rgba(237,243,232,.38) 76%,transparent 100%)}
+  .fog-mid{height:132px;top:52%;opacity:.48;animation:float-mid 31s ease-in-out infinite alternate}
+  .fog-mid:before{background:radial-gradient(ellipse at 5% 52%,rgba(249,247,230,.73) 0 7%,transparent 22%),radial-gradient(ellipse at 24% 61%,rgba(236,243,231,.68) 0 9%,transparent 25%),radial-gradient(ellipse at 47% 44%,rgba(250,247,230,.76) 0 8%,transparent 23%),radial-gradient(ellipse at 67% 60%,rgba(238,244,232,.68) 0 10%,transparent 25%),radial-gradient(ellipse at 89% 49%,rgba(250,247,231,.72) 0 8%,transparent 23%)}
+  .fog-mid:after{inset:37% 2%;background:linear-gradient(90deg,transparent 0%,rgba(248,247,232,.4) 16%,rgba(240,244,231,.7) 51%,rgba(248,246,230,.42) 83%,transparent 100%)}
+  .fog-low{height:90px;bottom:5%;opacity:.28;animation:breathe-low 24s ease-in-out infinite alternate}
+  .fog-low:before{background:radial-gradient(ellipse at 13% 58%,rgba(246,244,229,.72) 0 8%,transparent 24%),radial-gradient(ellipse at 42% 47%,rgba(237,242,229,.64) 0 10%,transparent 27%),radial-gradient(ellipse at 73% 61%,rgba(248,245,229,.68) 0 9%,transparent 25%)}
+  .note{position:absolute;left:22px;bottom:20px;z-index:6;max-width:390px;padding:10px 13px;border-radius:12px;background:rgba(244,241,226,.76);backdrop-filter:blur(8px);color:#33443d;line-height:1.5}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px;color:#52615b}
+  .legend span:before{content:"";display:inline-block;width:24px;height:3px;margin-right:7px;vertical-align:middle;border-radius:99px;background:#8ba69c}
+  @keyframes float-back{0%{transform:translate3d(-3%,3px,0) scaleX(.98);opacity:.28}55%{opacity:.4}100%{transform:translate3d(4%,-3px,0) scaleX(1.03);opacity:.33}}
+  @keyframes float-mid{0%{transform:translate3d(5%,0,0) scaleX(1.02);opacity:.4}48%{opacity:.54}100%{transform:translate3d(-4%,5px,0) scaleX(.97);opacity:.43}}
+  @keyframes breathe-low{0%{transform:translate3d(-1%,4px,0);opacity:.2}100%{transform:translate3d(2%,-3px,0);opacity:.34}}
+  @media(prefers-reduced-motion:reduce){.fog-layer{animation:none!important}}
+  @media(max-width:700px){.calm-stage{min-height:430px}.note{left:12px;right:12px;bottom:12px;max-width:none}.mountain.back{width:78%;left:12%}.mountain.mid{width:92%;left:-4%}.mountain.front{width:125%;left:-12%}}
+</style>
+
+<div class="calm-fog">
+  <h2>安静呼吸式游雾</h2>
+  <p class="subtitle">雾不会整片横穿画面，而是在不同深度缓慢错位、浓淡变化，像山谷自然吐纳。</p>
+  <div class="calm-stage" role="img" aria-label="前中后三层水墨山峰之间有三层低透明度云雾缓慢游移和呼吸">
+    <img class="mountain back" src="mountain-3.png" alt="后景山峰">
+    <div class="fog-layer fog-back"></div>
+    <img class="mountain mid" src="mountain-2.png" alt="中景山峰">
+    <div class="fog-layer fog-mid"></div>
+    <img class="mountain front" src="mountain-1.png" alt="前景山脊">
+    <div class="fog-layer fog-low"></div>
+    <div class="note">雾主要藏住层间接缝和山脚；峰顶、松树剪影与主轮廓保持清晰。</div>
+  </div>
+  <div class="legend" aria-label="三层雾运动周期">
+    <span>后层约 42 秒</span><span>中层约 31 秒</span><span>近地层约 24 秒</span>
+  </div>
+</div>

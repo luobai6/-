@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d874c3b6c0abd1240b8ccc39a6c564e4, type: 3}
+  m_Name: "L_\u767D\u6A21\u6D4B\u8BD5"
+  m_EditorClassIdentifier: 
+  "\u5730\u56FE\u5BBD\u5EA6": 3
+  "\u5730\u56FE\u957F\u5EA6": 3
+  "\u5730\u5757\u5217\u8868":
+  - "\u7F51\u683C\u5750\u6807": {x: 0, y: 0}
+    "\u9AD8\u5EA6\u7B49\u7EA7": 0
+    "\u5730\u5757\u5B9A\u4E49": {fileID: 11400000, guid: 2222853c6f4054744ab85984b1def219,
+      type: 2}
+  - "\u7F51\u683C\u5750\u6807": {x: 1, y: 0}
+    "\u9AD8\u5EA6\u7B49\u7EA7": 0
+    "\u5730\u5757\u5B9A\u4E49": {fileID: 11400000, guid: 2222853c6f4054744ab85984b1def219,
+      type: 2}
+  - "\u7F51\u683C\u5750\u6807": {x: 2, y: 0}
+    "\u9AD8\u5EA6\u7B49\u7EA7": 1
+    "\u5730\u5757\u5B9A\u4E49": {fileID: 11400000, guid: 2222853c6f4054744ab85984b1def219,
+      type: 2}
+  - "\u7F51\u683C\u5750\u6807": {x: 0, y: 1}
+    "\u9AD8\u5EA6\u7B49\u7EA7": 0
+    "\u5730\u5757\u5B9A\u4E49": {fileID: 11400000, guid: 2222853c6f4054744ab85984b1def219,
+      type: 2}
+  - "\u7F51\u683C\u5750\u6807": {x: 1, y: 1}
+    "\u9AD8\u5EA6\u7B49\u7EA7": 0
+    "\u5730\u5757\u5B9A\u4E49": {fileID: 11400000, guid: 9528a2cae7c922b45a698830194390d2,
+      type: 2}
+  - "\u7F51\u683C\u5750\u6807": {x: 2, y: 1}
+    "\u9AD8\u5EA6\u7B49\u7EA7": 0
+    "\u5730\u5757\u5B9A\u4E49": {fileID: 11400000, guid: 2222853c6f4054744ab85984b1def219,
+      type: 2}
+  - "\u7F51\u683C\u5750\u6807": {x: 0, y: 2}
+    "\u9AD8\u5EA6\u7B49\u7EA7": 0
+    "\u5730\u5757\u5B9A\u4E49": {fileID: 11400000, guid: 2222853c6f4054744ab85984b1def219,
+      type: 2}
+  - "\u7F51\u683C\u5750\u6807": {x: 1, y: 2}
+    "\u9AD8\u5EA6\u7B49\u7EA7": 0
+    "\u5730\u5757\u5B9A\u4E49": {fileID: 11400000, guid: 2222853c6f4054744ab85984b1def219,
+      type: 2}
+  - "\u7F51\u683C\u5750\u6807": {x: 2, y: 2}
+    "\u9AD8\u5EA6\u7B49\u7EA7": 1
+    "\u5730\u5757\u5B9A\u4E49": {fileID: 11400000, guid: 2222853c6f4054744ab85984b1def219,
+      type: 2}

@@ -1,0 +1,79 @@
+<style>
+  .fog-board{max-width:1080px;margin:0 auto;padding:8px 0 24px;color:#23302b}
+  .fog-board h2{margin-bottom:4px}
+  .fog-board .subtitle{margin-bottom:18px}
+  .fog-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+  .fog-card{position:relative;overflow:hidden;border-radius:16px;background:linear-gradient(180deg,#dce9e5 0%,#f3ead9 66%,#d8d2b9 100%);box-shadow:0 8px 24px rgba(38,54,48,.14);min-height:430px;transition:transform .16s ease,box-shadow .16s ease}
+  .fog-card:hover{transform:translateY(-2px)}
+  .fog-card.selected{box-shadow:0 0 0 3px #446f63,0 12px 28px rgba(38,54,48,.18)}
+  .scene{position:relative;height:300px;overflow:hidden;background:linear-gradient(180deg,#cfe0dc 0%,#ebeadc 72%,#d5c9aa 100%)}
+  .mountain{position:absolute;object-fit:contain;filter:saturate(.84) contrast(.97)}
+  .back{width:72%;left:16%;top:7%;opacity:.66}
+  .mid{width:82%;left:4%;top:29%;opacity:.82}
+  .front{width:106%;left:-7%;bottom:-10%;opacity:1}
+  .mist{position:absolute;left:-10%;width:120%;pointer-events:none;mix-blend-mode:screen;background:radial-gradient(ellipse at 15% 52%,rgba(247,246,231,.86) 0 12%,transparent 31%),radial-gradient(ellipse at 48% 45%,rgba(244,245,232,.82) 0 16%,transparent 38%),radial-gradient(ellipse at 83% 55%,rgba(247,246,235,.88) 0 13%,transparent 34%);filter:blur(5px)}
+  .mist:after{content:"";position:absolute;inset:24% 5%;background:linear-gradient(90deg,transparent,rgba(246,247,235,.72),transparent);filter:blur(9px)}
+  .layered .mist-one{height:58px;top:43%;opacity:.88}
+  .layered .mist-two{height:42px;top:68%;opacity:.58;transform:scaleX(.78) translateX(8%)}
+  .belt .mist-one{height:98px;top:47%;opacity:.97;filter:blur(8px)}
+  .belt .mist-two{display:none}
+  .hybrid .mist-one{height:54px;top:49%;opacity:.72;transform:translateX(-11%) scaleX(.82)}
+  .hybrid .mist-two{height:36px;top:71%;opacity:.48;transform:translateX(22%) scaleX(.58)}
+  .hybrid .wisps{position:absolute;inset:0;background:radial-gradient(ellipse at 17% 30%,rgba(248,247,235,.62) 0 5%,transparent 19%),radial-gradient(ellipse at 79% 39%,rgba(248,247,235,.52) 0 5%,transparent 18%);filter:blur(5px)}
+  .card-copy{padding:14px 16px 17px;background:rgba(248,246,237,.96);min-height:130px}
+  .card-copy h3{margin:0 0 6px;color:#263b34}
+  .card-copy p{margin:0;color:#59655f;line-height:1.55}
+  .tag{display:inline-block;margin-top:10px;padding:3px 8px;border-radius:999px;background:#dfe9e2;color:#315348;font-size:12px}
+  @media(max-width:820px){.fog-grid{grid-template-columns:1fr}.fog-card{min-height:0}.scene{height:330px}.card-copy{min-height:0}}
+</style>
+
+<div class="fog-board">
+  <h2>三张山峰画片的云雾组织方式</h2>
+  <p class="subtitle">重点比较：山体轮廓是否清楚、三层画片能否被雾连接成同一座山、是否保留地块识别度。点击选择一个方向。</p>
+  <div class="fog-grid options">
+    <div class="fog-card option layered" data-choice="layered-cloud-sea" onclick="document.querySelectorAll('.fog-card').forEach(x=>x.classList.remove('selected'));this.classList.add('selected');toggleSelect(this)">
+      <div class="scene" aria-label="层间云海效果示意">
+        <img class="mountain back" src="mountain-3.png" alt="后景高峰画片">
+        <div class="mist mist-one"></div>
+        <img class="mountain mid" src="mountain-2.png" alt="中景山峰画片">
+        <div class="mist mist-two"></div>
+        <img class="mountain front" src="mountain-1.png" alt="前景山脊画片">
+      </div>
+      <div class="card-copy">
+        <h3>A · 层间云海</h3>
+        <p>两条独立雾片插在前／中／后山之间，遮住山脚接缝，同时保留峰顶与外轮廓。</p>
+        <span class="tag">空间层次最强</span>
+      </div>
+    </div>
+
+    <div class="fog-card option belt" data-choice="single-fog-belt" onclick="document.querySelectorAll('.fog-card').forEach(x=>x.classList.remove('selected'));this.classList.add('selected');toggleSelect(this)">
+      <div class="scene" aria-label="山腰横雾效果示意">
+        <img class="mountain back" src="mountain-3.png" alt="后景高峰画片">
+        <img class="mountain mid" src="mountain-2.png" alt="中景山峰画片">
+        <div class="mist mist-one"></div>
+        <img class="mountain front" src="mountain-1.png" alt="前景山脊画片">
+      </div>
+      <div class="card-copy">
+        <h3>B · 山腰横雾</h3>
+        <p>一条较厚雾带横贯山腰，气势明显，但容易切断山体并遮掉松树、皴纹与可读轮廓。</p>
+        <span class="tag">氛围强但风险高</span>
+      </div>
+    </div>
+
+    <div class="fog-card option hybrid" data-choice="broken-drifting-mist" onclick="document.querySelectorAll('.fog-card').forEach(x=>x.classList.remove('selected'));this.classList.add('selected');toggleSelect(this)">
+      <div class="scene" aria-label="断续游雾效果示意">
+        <img class="mountain back" src="mountain-3.png" alt="后景高峰画片">
+        <div class="wisps"></div>
+        <img class="mountain mid" src="mountain-2.png" alt="中景山峰画片">
+        <div class="mist mist-one"></div>
+        <img class="mountain front" src="mountain-1.png" alt="前景山脊画片">
+        <div class="mist mist-two"></div>
+      </div>
+      <div class="card-copy">
+        <h3>C · 断续游雾</h3>
+        <p>短雾片错开放置，只藏住局部交界；可做极慢横移，画面更活，但需要控制重复感。</p>
+        <span class="tag">最适合轻动态</span>
+      </div>
+    </div>
+  </div>
+</div>
