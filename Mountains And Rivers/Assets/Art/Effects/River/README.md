@@ -9,11 +9,27 @@
 - B：洪水可扩张范围；越亮越早被淹没。
 - A：岸边湿润范围。
 
+河水材质中的“最大漫溢范围”用于限制洪水最终能够扩张到控制图 B 通道的哪一层：`0` 表示不向河岸漫溢，`0.5` 表示最多扩张到设计范围的一半，`1` 表示允许到达 B 通道定义的最外边界。Shader 仍会强制排除 B 通道中的纯黑背景，避免满进度时整格出现薄水层。
+
+每种河道还可使用一张独立的水头推进遮罩：黑色代表洪水先到，白色代表后到。推进遮罩只负责洪水从源头到出口的先后顺序，控制图 B 通道仍负责水面向两岸扩张。
+
+弯道可以分别绑定“正向水头推进遮罩”和“反向水头推进遮罩”。两张图都遵循黑色先到、白色后到：关闭“反向推进”时读取正向图，开启后读取反向图。独立绘制反向图可以避免简单黑白反相造成弯道水头形状和推进节奏失真。
+
+三叉河道的北、东、南三条河臂分别准备“端口到中心”和“中心到端口”两张推进图，共六张。每张图的 RGB 仍遵循“黑色先到、白色后到”，Alpha 只标记该图负责的河段。控制器通过“来水端口”选择其中一张入流图，其余两个方向使用出流图，因此任意端口都能作为上游，两条出口也能单独或同时播放。
+
 ## 纹理导入设置
 
 `T_River_Straight_Albedo.png`：开启 sRGB 与 Alpha Is Transparency，Wrap Mode 设为 Clamp，Compression 设为 None。
 
 `T_River_Straight_Control.tga`：关闭 sRGB，关闭 Alpha Is Transparency，Wrap Mode 设为 Clamp，Compression 设为 None。
+
+`T_River_Corner_NE_Advance.tga`：关闭 sRGB，Alpha Source 设为 None，Wrap Mode 设为 Clamp，关闭 Generate Mip Maps，Compression 设为 None。
+
+`T_River_Corner_EN_Advance.png`：作为东侧流向北侧的反向推进遮罩，使用与正向 Advance 相同的导入设置。
+
+直河道使用 `T_River_Straight_NS_Advance.png` 作为北侧到南侧的正向推进遮罩，使用 `T_River_Straight_SN_Advance.png` 作为南侧到北侧的反向推进遮罩；两张图使用相同的非颜色纹理导入设置。
+
+三叉河道六张 Advance TGA 必须保留输入 Alpha；关闭 sRGB、Alpha Is Transparency、Generate Mip Maps 和压缩，Wrap Mode 使用 Clamp。执行菜单 `山河未尽/河道工具/创建或更新三叉河道NES资源` 可以自动完成这些设置。
 
 ## 场景搭建
 
@@ -22,6 +38,10 @@
 3. 在父物体上添加 `RiverVisualController`，把“河水”的 Renderer 拖入“河水渲染器”。
 4. 直线河道默认流向为 `(0, -1)`。地块旋转 90 度后，将流向改为与河道一致。
 5. 在 Inspector 中把“洪水扩张进度”依次调到 `0`、`0.5`、`1`，检查河水是否从原河槽平滑扩向两岸。
+6. 为需要水头推进的河道材质绑定对应的推进遮罩。先把“洪水扩张进度”设为目标强度，再将“洪水到达进度”从 `0` 调到 `1`，检查水头是否从入口连续推进到出口。
+7. 在河水材质中同时绑定正向和反向推进遮罩。需要让洪水从原出口进入时，在根节点的 `RiverVisualController` 中开启“反向推进”，再次将“洪水到达进度”从 `0` 调到 `1` 检查反向动画。
+
+三叉河道生成后使用 `ForkRiverVisualController`。先选择“来水端口”，将“入流推进进度”从 `0` 调到 `1`；水头抵达中心后，再调整其余两个方向的支路推进进度。当前来水方向对应的支路值会被忽略。
 
 ## 推荐初始值
 

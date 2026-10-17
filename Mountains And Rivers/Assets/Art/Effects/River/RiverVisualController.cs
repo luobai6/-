@@ -24,6 +24,18 @@ public sealed class RiverVisualController : MonoBehaviour
 
     [Header("洪水")]
     [SerializeField, Range(0f, 1f)]
+    [Tooltip("控制洪水沿河道从源头向出口推进。0 为尚未到达，1 为到达整格出口。")]
+    private float 洪水到达进度 = 1f;
+
+    [SerializeField, Range(0.001f, 0.2f)]
+    [Tooltip("控制推进水头边缘的过渡宽度。数值越大，水头边缘越柔和。")]
+    private float 水头边缘柔和度 = 0.04f;
+
+    [SerializeField]
+    [Tooltip("开启后改用材质中的“反向水头推进遮罩”，使洪水从原出口向原入口推进。")]
+    private bool 反向推进;
+
+    [SerializeField, Range(0f, 1f)]
     [Tooltip("0 为平常河道，1 为控制图蓝通道允许的最大淹没范围。")]
     private float 洪水扩张进度;
 
@@ -33,6 +45,9 @@ public sealed class RiverVisualController : MonoBehaviour
 
     private static readonly int FlowDirectionId = Shader.PropertyToID("_FlowDirection");
     private static readonly int FlowSpeedId = Shader.PropertyToID("_FlowSpeed");
+    private static readonly int FloodArrivalProgressId = Shader.PropertyToID("_FloodArrivalProgress");
+    private static readonly int ArrivalSoftnessId = Shader.PropertyToID("_ArrivalSoftness");
+    private static readonly int ReverseAdvanceId = Shader.PropertyToID("_ReverseAdvance");
     private static readonly int FloodProgressId = Shader.PropertyToID("_FloodProgress");
     private static readonly int TurbidityId = Shader.PropertyToID("_Turbidity");
 
@@ -46,6 +61,25 @@ public sealed class RiverVisualController : MonoBehaviour
             洪水扩张进度 = Mathf.Clamp01(value);
             应用参数();
         }
+    }
+
+    public float 水头进度
+    {
+        get => 洪水到达进度;
+        set
+        {
+            洪水到达进度 = Mathf.Clamp01(value);
+            应用参数();
+        }
+    }
+
+    /// <summary>
+    /// 设置洪水是否改用独立的反向推进遮罩。
+    /// </summary>
+    public void 设置反向推进(bool 是否反向)
+    {
+        反向推进 = 是否反向;
+        应用参数();
     }
 
     private void OnEnable()
@@ -80,6 +114,9 @@ public sealed class RiverVisualController : MonoBehaviour
         Vector2 安全流向 = 流动方向.sqrMagnitude > 0.0001f ? 流动方向.normalized : Vector2.down;
         属性块.SetVector(FlowDirectionId, new Vector4(安全流向.x, 安全流向.y, 0f, 0f));
         属性块.SetFloat(FlowSpeedId, 流动速度);
+        属性块.SetFloat(FloodArrivalProgressId, 洪水到达进度);
+        属性块.SetFloat(ArrivalSoftnessId, 水头边缘柔和度);
+        属性块.SetFloat(ReverseAdvanceId, 反向推进 ? 1f : 0f);
         属性块.SetFloat(FloodProgressId, 洪水扩张进度);
         属性块.SetFloat(TurbidityId, 浑浊程度);
 

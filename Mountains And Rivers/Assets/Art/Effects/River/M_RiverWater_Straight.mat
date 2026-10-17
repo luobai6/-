@@ -23,18 +23,31 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _AdvanceMap:
+        m_Texture: {fileID: 2800000, guid: d03bdb7b37c317d4f99e16b6de4149ec, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _ControlMap:
         m_Texture: {fileID: 2800000, guid: 5408ac309f9a2614a86caae2fab97b83, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _ReverseAdvanceMap:
+        m_Texture: {fileID: 2800000, guid: ce4a5f65c46627d4584fe0a6624ecf83, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _ArrivalSoftness: 0.04
+    - _FloodAreaCutoff: 0.01
+    - _FloodArrivalProgress: 1
     - _FloodProgress: 0
     - _FloodSoftness: 0.045
     - _FlowSpeed: 0.06
     - _FoamWidth: 0.14
     - _LargeRippleScale: 5
+    - _MaxFloodExtent: 1
     - _Opacity: 0.42
+    - _ReverseAdvance: 0
     - _RippleStrength: 0.12
     - _SmallRippleScale: 14
     - _Turbidity: 0.35
