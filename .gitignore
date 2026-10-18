@@ -31,36 +31,3 @@ Mountains And Rivers/*.VC.db
 Mountains And Rivers/sysinfo.txt
 Mountains And Rivers/crashlytics-build.properties
 .DS_Store
-
-# Main Unity project (repository root)
-/[Ll]ibrary/
-/[Tt]emp/
-/[Oo]bj/
-/[Ll]ogs/
-/[Uu]ser[Ss]ettings/
-/[Bb]uild/
-/[Bb]uilds/
-/[Mm]emoryCaptures/
-/[Rr]ecordings/
-/.vs/
-/.vscode/
-/.idea/
-/.vsconfig
-/*.csproj
-/*.sln
-/*.slnx
-/*.suo
-/*.tmp
-/*.user
-/*.userprefs
-/*.pidb
-/*.booproj
-/*.svd
-/*.pdb
-/*.mdb
-/*.opendb
-/*.VC.db
-/sysinfo.txt
-/crashlytics-build.properties
-Thumbs.db
-Desktop.ini
