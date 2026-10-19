@@ -35,6 +35,7 @@ Material:
     m_Floats:
     - _AlphaCutoff: 0.01
     - _DepthDarkening: 0.1
+    - _RotateBaseMap180: 1
     - _ParallaxStrength: 0.018
     m_Colors:
     - _Tint: {r: 1, g: 1, b: 1, a: 1}

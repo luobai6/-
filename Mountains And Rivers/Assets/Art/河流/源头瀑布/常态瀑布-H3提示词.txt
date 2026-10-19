@@ -1,0 +1,7 @@
+For the target video, at 0.00 seconds into the target video, <Picture 1> (from [Shot 1]) is fully referenced.
+
+integrated_multimodal_description: [Shot 1] Chinese ink-wash and watercolor animation on a perfectly uniform pure-black background. Preserve the exact centered position, scale, silhouette, blue-gray mineral-pigment colors, and bottom river connection of the isolated waterfall in <Picture 1>. The camera holds a completely static shot for the entire four seconds. Water continuously streams downward inside the existing waterfall silhouette: narrow pale brush streaks descend from the top, subtly separate and merge, then produce restrained foam flicker and small watercolor splashes at the base before continuing through the existing shallow stream toward the bottom-center edge. The waterfall maintains a calm, steady normal-flow state. Only the internal water texture, small foam strokes, and faint local mist move; the outer contour and overall occupied area remain stable. The motion develops as a clean repeating cycle and returns near the opening visual state by the end. The pure-black background remains perfectly flat and unchanged throughout. No new scenery, mountains, rocks, vegetation, riverbanks, tributaries, camera movement, framing change, text, or transition appears.
+
+overall_soundscape: A continuous light waterfall and restrained splashing at the base, with no other ambient sounds.
+
+non_diegetic_music: N/A

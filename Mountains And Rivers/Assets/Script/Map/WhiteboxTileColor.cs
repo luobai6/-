@@ -10,11 +10,23 @@ namespace ShanheWeijin.Map
         [SerializeField, Tooltip("该地块底座的白模预览颜色。")]
         private Color 白模颜色 = Color.white;
 
+        [SerializeField, HideInInspector]
+        private Vector4 顶面边缘启用 = Vector4.zero;
+
         private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
+        private static readonly int TopEdgeFlagsId = Shader.PropertyToID("_TopEdgeFlags");
 
         public void 设置颜色(Color 颜色)
         {
             白模颜色 = 颜色;
+            应用颜色();
+        }
+
+        /// <summary>设置预览颜色，以及 +X、-X、+Z、-Z 四方向需要显示的顶面高差边缘。</summary>
+        public void 设置颜色与顶面边缘(Color 颜色, Vector4 边缘启用)
+        {
+            白模颜色 = 颜色;
+            顶面边缘启用 = 边缘启用;
             应用颜色();
         }
 
@@ -33,6 +45,7 @@ namespace ShanheWeijin.Map
             MaterialPropertyBlock 属性块 = new MaterialPropertyBlock();
             渲染器.GetPropertyBlock(属性块);
             属性块.SetColor(BaseColorId, 白模颜色);
+            属性块.SetVector(TopEdgeFlagsId, 顶面边缘启用);
             渲染器.SetPropertyBlock(属性块);
         }
     }

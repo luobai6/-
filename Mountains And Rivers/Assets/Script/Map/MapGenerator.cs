@@ -60,10 +60,13 @@ namespace ShanheWeijin.Map
             新结果.transform.SetParent(transform, false);
             int 已生成 = 0;
             int 已跳过 = 0;
-            HashSet<Vector2Int> 已占用坐标 = new HashSet<Vector2Int>();
+            Dictionary<Vector2Int, TileData> 有效地块 = new Dictionary<Vector2Int, TileData>();
+            Dictionary<Vector2Int, float> 有效顶面高度 = new Dictionary<Vector2Int, float>();
 
             try
             {
+                // 先收集完整地图，再生成地块。顶面墨线需要同时知道四方向邻居高度，
+                // 不能在单次顺序遍历中仅依据已经生成的地块判断。
                 foreach (TileData 地块 in 关卡数据.地块列表)
                 {
                     if (地块 == null)
@@ -81,7 +84,7 @@ namespace ShanheWeijin.Map
                         continue;
                     }
 
-                    if (已占用坐标.Contains(坐标))
+                    if (有效地块.ContainsKey(坐标))
                     {
                         已跳过++;
                         Debug.LogWarning($"地块 ({坐标.x}, {坐标.y}) 坐标重复，仅保留首次出现的地块。", this);
@@ -96,8 +99,26 @@ namespace ShanheWeijin.Map
                         continue;
                     }
 
-                    已占用坐标.Add(坐标);
-                    创建地块(新结果.transform, 地块, 顶面高度);
+                    有效地块.Add(坐标, 地块);
+                    有效顶面高度.Add(坐标, 顶面高度);
+                }
+
+                // 按原列表顺序生成，保持 Hierarchy 顺序稳定；重复或无效数据不会进入有效字典。
+                foreach (TileData 地块 in 关卡数据.地块列表)
+                {
+                    if (地块 == null ||
+                        !有效地块.TryGetValue(地块.网格坐标, out TileData 首次有效地块) ||
+                        !ReferenceEquals(地块, 首次有效地块))
+                    {
+                        continue;
+                    }
+
+                    Vector4 顶面边缘启用 = 计算顶面边缘启用(地块, 有效地块);
+                    创建地块(
+                        新结果.transform,
+                        地块,
+                        有效顶面高度[地块.网格坐标],
+                        顶面边缘启用);
                     已生成++;
                 }
             }
@@ -172,7 +193,36 @@ namespace ShanheWeijin.Map
             return 候选 != null && 候选.parent == transform && 候选.name == "GeneratedMap";
         }
 
-        private void 创建地块(Transform 地图根节点, TileData 地块, float 顶面高度)
+        private static Vector4 计算顶面边缘启用(
+            TileData 当前地块,
+            IReadOnlyDictionary<Vector2Int, TileData> 有效地块)
+        {
+            Vector2Int 坐标 = 当前地块.网格坐标;
+            int 当前高度 = 当前地块.高度等级;
+
+            // x/y/z/w 依次对应 +X、-X、+Z、-Z。
+            return new Vector4(
+                应显示顶面边缘(坐标 + Vector2Int.right, 当前高度, 有效地块),
+                应显示顶面边缘(坐标 + Vector2Int.left, 当前高度, 有效地块),
+                应显示顶面边缘(坐标 + Vector2Int.up, 当前高度, 有效地块),
+                应显示顶面边缘(坐标 + Vector2Int.down, 当前高度, 有效地块));
+        }
+
+        private static float 应显示顶面边缘(
+            Vector2Int 邻居坐标,
+            int 当前高度,
+            IReadOnlyDictionary<Vector2Int, TileData> 有效地块)
+        {
+            return !有效地块.TryGetValue(邻居坐标, out TileData 邻居) || 邻居.高度等级 < 当前高度
+                ? 1f
+                : 0f;
+        }
+
+        private void 创建地块(
+            Transform 地图根节点,
+            TileData 地块,
+            float 顶面高度,
+            Vector4 顶面边缘启用)
         {
             Vector2Int 坐标 = 地块.网格坐标;
             GameObject 地块根节点 = new GameObject($"TileRoot_{坐标.x}_{坐标.y}");
@@ -187,8 +237,9 @@ namespace ShanheWeijin.Map
 
             MeshRenderer 渲染器 = 底座.GetComponent<MeshRenderer>();
             渲染器.sharedMaterial = 默认白模材质;
-            底座.AddComponent<WhiteboxTileColor>().设置颜色(
-                地块.地块定义 != null ? 地块.地块定义.白模颜色 : Color.white);
+            底座.AddComponent<WhiteboxTileColor>().设置颜色与顶面边缘(
+                地块.地块定义 != null ? 地块.地块定义.白模颜色 : Color.white,
+                顶面边缘启用);
 
             GameObject 内容锚点 = new GameObject("PrimaryContent");
             内容锚点.transform.SetParent(地块根节点.transform, false);

@@ -4,6 +4,7 @@ Shader "ShanheWeijin/RiverBedParallax"
     {
         _BaseMap ("河道颜色图", 2D) = "white" {}
         _ControlMap ("河道控制图（R河面 G高度 B洪水 A湿润）", 2D) = "white" {}
+        [Toggle] _RotateBaseMap180 ("颜色图旋转180度", Float) = 0
         _Tint ("整体染色", Color) = (1, 1, 1, 1)
         _ParallaxStrength ("河床视差强度", Range(0, 0.06)) = 0.018
         _DepthDarkening ("深水压暗程度", Range(0, 0.5)) = 0.10
@@ -58,6 +59,7 @@ Shader "ShanheWeijin/RiverBedParallax"
 
             CBUFFER_START(UnityPerMaterial)
                 float4 _BaseMap_ST;
+                half _RotateBaseMap180;
                 half4 _Tint;
                 half _ParallaxStrength;
                 half _DepthDarkening;
@@ -98,7 +100,9 @@ Shader "ShanheWeijin/RiverBedParallax"
                     displacedUV = lerp(displacedUV, targetUV, 0.7);
                 }
 
-                half4 baseColor = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, displacedUV) * _Tint;
+                // 彩图可独立旋转 180 度，不改变控制图、水面或洪水推进方向。
+                float2 baseUV = lerp(displacedUV, 1.0 - displacedUV, _RotateBaseMap180);
+                half4 baseColor = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, baseUV) * _Tint;
                 half heightValue = SAMPLE_TEXTURE2D(_ControlMap, sampler_ControlMap, displacedUV).g;
                 half riverDepth = 1.0h - heightValue;
                 baseColor.rgb *= 1.0h - riverDepth * _DepthDarkening;

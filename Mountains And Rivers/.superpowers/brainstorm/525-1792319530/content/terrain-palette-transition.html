@@ -1,0 +1,83 @@
+<style>
+  .terrain-board { color: #292b25; font-family: "Microsoft YaHei", "Noto Sans SC", sans-serif; }
+  .terrain-board h1 { margin: 0 0 8px; font-size: 26px; letter-spacing: .04em; }
+  .terrain-board .lead { margin: 0 0 18px; color: #65675e; line-height: 1.65; }
+  .terrain-board h2 { margin: 22px 0 10px; font-size: 16px; }
+  .source-palette { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .palette-group { overflow: hidden; border: 1px solid #d8d3c5; border-radius: 12px; background: #f8f5ed; }
+  .swatches { display: grid; grid-template-columns: repeat(3, 1fr); height: 46px; }
+  .palette-label { padding: 8px 10px 10px; font-size: 12px; color: #5e6058; }
+  .options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .option { position: relative; padding: 12px; border: 2px solid transparent; border-radius: 15px; background: #f8f5ed; box-shadow: 0 5px 18px rgba(54,54,44,.09); cursor: pointer; transition: transform .15s, border-color .15s; }
+  .option:hover { transform: translateY(-2px); }
+  .option.selected { border-color: #62786f; box-shadow: 0 6px 22px rgba(68,91,82,.18); }
+  .recommend { position: absolute; top: 10px; right: 10px; padding: 3px 8px; border-radius: 20px; color: #f7f1df; background: #566c63; font-size: 11px; }
+  .scene { height: 176px; margin-bottom: 12px; overflow: hidden; border-radius: 10px; background: #eee7d5; }
+  .option h3 { margin: 0 0 6px; font-size: 17px; }
+  .option p { min-height: 58px; margin: 0; color: #66685f; font-size: 13px; line-height: 1.55; }
+  .chips { display: flex; gap: 6px; margin-top: 10px; }
+  .chip { width: 28px; height: 16px; border-radius: 5px; border: 1px solid rgba(40,40,30,.12); }
+  .note { margin-top: 14px; padding: 12px 14px; border-left: 4px solid #73867d; background: #f2efe5; color: #55584f; font-size: 13px; line-height: 1.6; }
+  @media (max-width: 850px) { .options, .source-palette { grid-template-columns: 1fr; } .option p { min-height: auto; } }
+</style>
+
+<div class="terrain-board">
+  <h1>现有山体 → 地面配色过渡</h1>
+  <p class="lead">下面所有颜色都从三张现有山体中提取。重点不是把山体颜色原样铺满，而是让地面继承它的“暖石底、青绿染、墨色压边”。</p>
+
+  <h2>山体里的四组实际颜色</h2>
+  <div class="source-palette">
+    <div class="palette-group"><div class="swatches"><i style="background:#21261F"></i><i style="background:#27271D"></i><i style="background:#3D3F32"></i></div><div class="palette-label">墨色骨架 · 松木与最深阴影</div></div>
+    <div class="palette-group"><div class="swatches"><i style="background:#4C6969"></i><i style="background:#6E8179"></i><i style="background:#7A8D7F"></i></div><div class="palette-label">石青石绿 · 山体冷色矿物层</div></div>
+    <div class="palette-group"><div class="swatches"><i style="background:#6D684F"></i><i style="background:#757057"></i><i style="background:#85866E"></i></div><div class="palette-label">灰橄榄 · 山脚到地面的桥接色</div></div>
+    <div class="palette-group"><div class="swatches"><i style="background:#A49B7C"></i><i style="background:#C3B38E"></i><i style="background:#D7C096"></i></div><div class="palette-label">暖岩土 · 主体受光与纸本底色</div></div>
+  </div>
+
+  <h2>三种地面方向（点击选择）</h2>
+  <div class="options">
+    <div class="option" data-choice="warm-earth" onclick="toggleSelect(this)">
+      <span class="recommend">推荐</span>
+      <svg class="scene" viewBox="0 0 320 176" preserveAspectRatio="none" aria-label="暖赭承接示意">
+        <rect width="320" height="176" fill="#EEE7D5"/>
+        <path d="M0 72 C45 62 80 69 121 58 C164 47 205 66 250 53 C280 45 302 48 320 51 V176 H0Z" fill="#CBB994"/>
+        <path d="M0 98 C55 79 94 96 145 78 C190 62 239 85 320 65 V176 H0Z" fill="#BCAF89" opacity=".72"/>
+        <path d="M47 81 C75 58 97 43 119 28 C137 47 149 64 165 78Z" fill="#7F8D7F" opacity=".78"/>
+        <path d="M103 77 C126 49 145 34 163 20 C184 46 199 62 220 76Z" fill="#657B78" opacity=".84"/>
+        <path d="M0 123 C54 112 97 124 148 110 C198 96 252 118 320 101" fill="none" stroke="#77735D" stroke-width="4" opacity=".48"/>
+      </svg>
+      <h3>A · 暖赭承接</h3>
+      <p>地面以山体暖岩色为主，青绿只留在坡脚、沟壑和转折。山体最突出，连续感稳定，也最适合先做普通地块。</p>
+      <div class="chips"><i class="chip" style="background:#CBB994"></i><i class="chip" style="background:#BCAF89"></i><i class="chip" style="background:#7F8D7F"></i><i class="chip" style="background:#657B78"></i></div>
+    </div>
+
+    <div class="option" data-choice="blue-green" onclick="toggleSelect(this)">
+      <svg class="scene" viewBox="0 0 320 176" preserveAspectRatio="none" aria-label="青绿延展示意">
+        <rect width="320" height="176" fill="#E8DFC9"/>
+        <path d="M0 69 C51 58 92 72 135 55 C179 38 229 65 320 49 V176 H0Z" fill="#AFA985"/>
+        <path d="M0 101 C53 78 102 98 154 72 C203 48 258 76 320 62 V176 H0Z" fill="#788D7F" opacity=".88"/>
+        <path d="M49 92 C75 57 96 42 118 26 C138 49 151 70 170 87Z" fill="#4C6969" opacity=".9"/>
+        <path d="M108 84 C135 48 153 31 171 18 C196 50 210 66 231 81Z" fill="#6E8179"/>
+        <path d="M0 128 C70 103 121 131 180 103 C228 81 270 103 320 91" fill="none" stroke="#D3B586" stroke-width="8" opacity=".72"/>
+      </svg>
+      <h3>B · 青绿延展</h3>
+      <p>把山体的石青石绿继续铺进大面积地表，风格最接近青绿山水，但会削弱山与地的层级，容易显得满和抢。</p>
+      <div class="chips"><i class="chip" style="background:#AFA985"></i><i class="chip" style="background:#788D7F"></i><i class="chip" style="background:#4C6969"></i><i class="chip" style="background:#D3B586"></i></div>
+    </div>
+
+    <div class="option" data-choice="cool-stone" onclick="toggleSelect(this)">
+      <svg class="scene" viewBox="0 0 320 176" preserveAspectRatio="none" aria-label="浅石青缓坡示意">
+        <rect width="320" height="176" fill="#EAE4D3"/>
+        <path d="M0 73 C39 63 84 70 124 57 C171 42 215 68 320 50 V176 H0Z" fill="#B8B28F"/>
+        <path d="M0 101 C58 84 98 96 151 77 C209 56 260 82 320 67 V176 H0Z" fill="#7A8D7F" opacity=".7"/>
+        <path d="M52 88 C75 61 95 42 119 26 C137 50 150 68 168 83Z" fill="#4C6969" opacity=".78"/>
+        <path d="M108 83 C134 52 155 33 176 18 C196 47 210 68 230 80Z" fill="#788D7F" opacity=".93"/>
+        <path d="M0 126 C61 110 105 126 164 106 C218 87 263 108 320 96" fill="none" stroke="#C3B38E" stroke-width="5" opacity=".72"/>
+      </svg>
+      <h3>C · 浅石青缓坡</h3>
+      <p>地面整体偏冷，山脚融入最自然，适合高低错落的坡面；但河水也偏冷时，需要暖色岸线把两者重新分开。</p>
+      <div class="chips"><i class="chip" style="background:#B8B28F"></i><i class="chip" style="background:#7A8D7F"></i><i class="chip" style="background:#4C6969"></i><i class="chip" style="background:#C3B38E"></i></div>
+    </div>
+  </div>
+
+  <div class="note">我的判断：先用 A 建普通地块基准，再只在高差坡脚局部借用 C 的冷色；B 可以保留给少数重要区域，不作为全图底色。</div>
+</div>

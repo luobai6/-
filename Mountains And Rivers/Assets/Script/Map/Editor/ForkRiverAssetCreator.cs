@@ -76,6 +76,12 @@ public static class ForkRiverAssetCreator
             河水材质.SetFloat("_FloodSoftness", 0.045f);
             河水材质.SetFloat("_MaxFloodExtent", 1f);
             河水材质.SetFloat("_Turbidity", 0.35f);
+            河水材质.SetFloat("_FloodWaveEnabled", 1f);
+            河水材质.SetFloat("_FloodWaveHeight", 0.35f);
+            河水材质.SetFloat("_FloodWaveWidth", 0.08f);
+            河水材质.SetFloat("_FloodWaveFoamStrength", 1f);
+            河水材质.SetFloat("_ForkImpactStrength", 1f);
+            河水材质.SetFloat("_ForkImpactHeightMultiplier", 1.5f);
 
             EditorUtility.SetDirty(河床材质);
             EditorUtility.SetDirty(河水材质);

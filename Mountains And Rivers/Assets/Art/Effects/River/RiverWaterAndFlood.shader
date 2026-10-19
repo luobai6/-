@@ -22,6 +22,11 @@ Shader "ShanheWeijin/RiverWaterAndFlood"
         _SmallRippleScale ("细波纹尺度", Range(2, 40)) = 14
         _RippleStrength ("波纹明暗强度", Range(0, 0.5)) = 0.12
         _FoamWidth ("岸边水沫宽度", Range(0.01, 0.5)) = 0.14
+        [Toggle] _FloodWaveEnabled ("启用鼓起洪水浪头", Float) = 1
+        _FloodWaveHeight ("浪头高度（局部空间）", Range(0, 1)) = 0.35
+        _FloodWaveWidth ("浪头前后宽度", Range(0.005, 0.2)) = 0.08
+        _FloodWaveFoamStrength ("浪头水沫强度", Range(0, 2)) = 1
+        _OuterBankImpactStrength ("弯道外岸冲击强度", Range(0, 2)) = 0
     }
 
     SubShader
@@ -44,7 +49,8 @@ Shader "ShanheWeijin/RiverWaterAndFlood"
             Cull Off
 
             HLSLPROGRAM
-            #pragma target 2.0
+            // 顶点阶段需要读取推进图，因此使用 Shader Model 3.0。
+            #pragma target 3.0
             #pragma vertex Vert
             #pragma fragment Frag
 
@@ -60,6 +66,8 @@ Shader "ShanheWeijin/RiverWaterAndFlood"
             {
                 float4 positionCS : SV_POSITION;
                 float2 uv : TEXCOORD0;
+                half waveBand : TEXCOORD1;
+                half waveNoise : TEXCOORD2;
             };
 
             TEXTURE2D(_ControlMap);
@@ -88,6 +96,11 @@ Shader "ShanheWeijin/RiverWaterAndFlood"
                 half _SmallRippleScale;
                 half _RippleStrength;
                 half _FoamWidth;
+                half _FloodWaveEnabled;
+                half _FloodWaveHeight;
+                half _FloodWaveWidth;
+                half _FloodWaveFoamStrength;
+                half _OuterBankImpactStrength;
             CBUFFER_END
 
             float Hash21(float2 p)
@@ -112,8 +125,34 @@ Shader "ShanheWeijin/RiverWaterAndFlood"
             Varyings Vert(Attributes input)
             {
                 Varyings output;
-                output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
-                output.uv = TRANSFORM_TEX(input.uv, _ControlMap);
+                float2 uv = TRANSFORM_TEX(input.uv, _ControlMap);
+                half normalRiverMask = SAMPLE_TEXTURE2D_LOD(_ControlMap, sampler_ControlMap, uv, 0).r;
+                half forwardAdvanceValue = SAMPLE_TEXTURE2D_LOD(_AdvanceMap, sampler_AdvanceMap, uv, 0).r;
+                half reverseAdvanceValue = SAMPLE_TEXTURE2D_LOD(_ReverseAdvanceMap, sampler_ReverseAdvanceMap, uv, 0).r;
+                half advanceValue = lerp(forwardAdvanceValue, reverseAdvanceValue, saturate(_ReverseAdvance));
+
+                // 浪头只存在于洪水推进边界；进度为 0 或 1 时自动收起，
+                // 避免在河道入口或出口长时间留下一道白线。
+                half waveActive = step(0.001h, _FloodArrivalProgress)
+                                * (1.0h - step(0.999h, _FloodArrivalProgress))
+                                * step(0.5h, _FloodWaveEnabled);
+                half waveDistance = abs(advanceValue - _FloodArrivalProgress);
+                half waveBand = saturate(1.0h - waveDistance / max(_FloodWaveWidth, 0.001h));
+                waveBand = waveBand * waveBand * (3.0h - 2.0h * waveBand);
+
+                // 两组空间噪声让浪脊产生断续和高低变化，但保留横跨河宽的主体。
+                half coarseNoise = ValueNoise(uv * 9.0 + _Time.y * float2(0.19, -0.13));
+                half fineNoise = ValueNoise(uv * 23.0 - _Time.y * float2(0.11, 0.17));
+                half waveNoise = saturate(0.48h + coarseNoise * 0.38h + fineNoise * 0.24h);
+                half brokenCrest = smoothstep(0.28h, 0.62h, waveNoise);
+                half finalWave = waveBand * normalRiverMask * waveActive * brokenCrest;
+
+                float3 displacedPosition = input.positionOS.xyz;
+                displacedPosition.y += finalWave * _FloodWaveHeight;
+                output.positionCS = TransformObjectToHClip(displacedPosition);
+                output.uv = uv;
+                output.waveBand = finalWave;
+                output.waveNoise = waveNoise;
                 return output;
             }
 
@@ -162,12 +201,28 @@ Shader "ShanheWeijin/RiverWaterAndFlood"
                 half foamMovement = saturate(largeRipple * 0.7h + 0.15h);
                 waterColor = lerp(waterColor, _FoamColor.rgb, edgeBand * foamMovement);
 
+                // 洪水前锋的鼓起浪脊。亮沫集中在顶部，噪声让它在河宽方向上参差断续。
+                half crestFoam = saturate(input.waveBand * (0.72h + input.waveNoise * 0.45h) * _FloodWaveFoamStrength);
+                waterColor = lerp(waterColor, _FoamColor.rgb * 1.08h, crestFoam);
+
+                // 推进方向与河岸外法线越一致，说明水头越正面挤向该岸。
+                // 这会自动把额外水沫保留在转弯外岸，而不是同时点亮两侧。
+                // 直道材质默认将强度设为 0，不会改变现有效果。
+                float2 advanceGradient = float2(ddx(advanceValue), ddy(advanceValue));
+                float2 inwardGradient = float2(ddx(normalRiverMask), ddy(normalRiverMask));
+                float2 downstreamDirection = normalize(advanceGradient + float2(0.00001, 0.00001));
+                float2 outwardDirection = -normalize(inwardGradient + float2(0.00001, 0.00001));
+                half outwardAlignment = smoothstep(0.15h, 0.75h, saturate(dot(downstreamDirection, outwardDirection)));
+                half shorelineImpact = edgeBand * input.waveBand * outwardAlignment * _OuterBankImpactStrength;
+                waterColor = lerp(waterColor, _FoamColor.rgb, saturate(shorelineImpact));
+
                 // A 通道使刚被洪水覆盖的岸地略显湿暗，避免扩张边缘像硬贴片。
                 half wetBank = control.a * _FloodProgress * arrivalMask * (1.0h - normalRiverMask);
                 waterColor = lerp(waterColor, _FloodColor.rgb * 0.72h, wetBank * _Turbidity * 0.35h);
 
                 half alpha = waterMask * _Opacity;
                 alpha += edgeBand * foamMovement * 0.10h;
+                alpha += crestFoam * 0.28h + shorelineImpact * 0.16h;
                 clip(alpha - 0.002h);
                 return half4(waterColor, saturate(alpha));
             }

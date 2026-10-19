@@ -55,6 +55,31 @@ public sealed class ForkRiverVisualController : MonoBehaviour
     [Tooltip("洪水越浑浊，颜色越偏向材质中的洪水颜色。")]
     private float 浑浊程度 = 0.35f;
 
+    [Header("洪水浪头")]
+    [SerializeField]
+    [Tooltip("启用后，入流与各支路的推进边界会鼓起低矮浪脊。")]
+    private bool 启用鼓起浪头 = true;
+
+    [SerializeField, Range(0f, 1f)]
+    [Tooltip("浪脊的局部高度。当河面 Plane 缩放为 0.1 时，0.35 约等于 0.035 个世界单位。")]
+    private float 浪头高度 = 0.35f;
+
+    [SerializeField, Range(0.005f, 0.2f)]
+    [Tooltip("浪头沿推进方向占用的宽度。")]
+    private float 浪头宽度 = 0.08f;
+
+    [SerializeField, Range(0f, 2f)]
+    [Tooltip("控制浪脊和中心冲击区的白色水沫强度。")]
+    private float 浪头水沫强度 = 1f;
+
+    [SerializeField, Range(0f, 2f)]
+    [Tooltip("入流到达中心、出流尚未开始时的冲撞强度。")]
+    private float 中心冲撞强度 = 1f;
+
+    [SerializeField, Range(1f, 2f)]
+    [Tooltip("三叉中心的堆高相对普通浪头的倍数，默认为 1.5 倍。")]
+    private float 中心堆高倍数 = 1.5f;
+
     private static readonly int IncomingPortId = Shader.PropertyToID("_IncomingPort");
     private static readonly int EntryArrivalProgressId = Shader.PropertyToID("_EntryArrivalProgress");
     private static readonly int NorthExitProgressId = Shader.PropertyToID("_NorthExitProgress");
@@ -63,6 +88,12 @@ public sealed class ForkRiverVisualController : MonoBehaviour
     private static readonly int ArrivalSoftnessId = Shader.PropertyToID("_ArrivalSoftness");
     private static readonly int FloodProgressId = Shader.PropertyToID("_FloodProgress");
     private static readonly int TurbidityId = Shader.PropertyToID("_Turbidity");
+    private static readonly int FloodWaveEnabledId = Shader.PropertyToID("_FloodWaveEnabled");
+    private static readonly int FloodWaveHeightId = Shader.PropertyToID("_FloodWaveHeight");
+    private static readonly int FloodWaveWidthId = Shader.PropertyToID("_FloodWaveWidth");
+    private static readonly int FloodWaveFoamStrengthId = Shader.PropertyToID("_FloodWaveFoamStrength");
+    private static readonly int ForkImpactStrengthId = Shader.PropertyToID("_ForkImpactStrength");
+    private static readonly int ForkImpactHeightMultiplierId = Shader.PropertyToID("_ForkImpactHeightMultiplier");
 
     private MaterialPropertyBlock 属性块;
 
@@ -102,6 +133,7 @@ public sealed class ForkRiverVisualController : MonoBehaviour
 
     private void OnEnable()
     {
+        FloodWaveGridMeshProvider.确保使用高细分网格(河水渲染器);
         应用参数();
     }
 
@@ -127,6 +159,12 @@ public sealed class ForkRiverVisualController : MonoBehaviour
         属性块.SetFloat(ArrivalSoftnessId, 水头边缘柔和度);
         属性块.SetFloat(FloodProgressId, 洪水扩张进度);
         属性块.SetFloat(TurbidityId, 浑浊程度);
+        属性块.SetFloat(FloodWaveEnabledId, 启用鼓起浪头 ? 1f : 0f);
+        属性块.SetFloat(FloodWaveHeightId, 浪头高度);
+        属性块.SetFloat(FloodWaveWidthId, 浪头宽度);
+        属性块.SetFloat(FloodWaveFoamStrengthId, 浪头水沫强度);
+        属性块.SetFloat(ForkImpactStrengthId, 中心冲撞强度);
+        属性块.SetFloat(ForkImpactHeightMultiplierId, 中心堆高倍数);
         河水渲染器.SetPropertyBlock(属性块);
     }
 }

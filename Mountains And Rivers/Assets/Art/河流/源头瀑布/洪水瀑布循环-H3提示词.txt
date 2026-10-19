@@ -1,0 +1,7 @@
+For the target video, at 0.00 seconds into the target video, <Picture 1> (from [Shot 1]) is fully referenced.
+
+integrated_multimodal_description: [Shot 1] Chinese ink-wash and watercolor animation on a perfectly uniform pure-black background. Preserve the exact centered position, broad flood silhouette, scale, deep blue-gray and restrained ochre-brown turbidity, strong white foam, and bottom-center river connection of the isolated flood waterfall in <Picture 1>. The camera remains completely static throughout the short clip. Heavy floodwater continuously rushes downward inside the existing silhouette: dark mineral-pigment channels and pale foaming brush streaks split, merge, and descend rapidly, controlled spray flickers at the impact point, and the wide turbulent shallow stream continues toward the bottom-center edge. Only the internal water texture, foam strokes, spray, and very faint local mist move; the outer contour and occupied area remain stable. The motion forms a clean repeating cycle and returns near the opening visual state by the end. The pure-black background remains perfectly flat and unchanged. No new scenery, mountains, rocks, vegetation, terrain, riverbanks, tributaries, side streams, camera movement, framing change, text, cut, or transition appears.
+
+overall_soundscape: A continuous heavy waterfall roar with forceful splashing and turbulent rushing water at the base.
+
+non_diegetic_music: N/A

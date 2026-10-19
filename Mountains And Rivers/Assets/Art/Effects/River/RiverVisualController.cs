@@ -43,6 +43,27 @@ public sealed class RiverVisualController : MonoBehaviour
     [Tooltip("洪水越浑浊，颜色越偏向材质中的洪水颜色。")]
     private float 浑浊程度 = 0.35f;
 
+    [Header("洪水浪头")]
+    [SerializeField]
+    [Tooltip("启用后，河面会在洪水推进边界处鼓起一条低矮浪脊。")]
+    private bool 启用鼓起浪头 = true;
+
+    [SerializeField, Range(0f, 1f)]
+    [Tooltip("浪脊的局部高度。当河面 Plane 缩放为 0.1 时，0.35 约等于 0.035 个世界单位。")]
+    private float 浪头高度 = 0.35f;
+
+    [SerializeField, Range(0.005f, 0.2f)]
+    [Tooltip("浪头沿推进方向占用的宽度。建议从 0.08 开始调整。")]
+    private float 浪头宽度 = 0.08f;
+
+    [SerializeField, Range(0f, 2f)]
+    [Tooltip("控制浪脊顶部白色水沫的明显程度。")]
+    private float 浪头水沫强度 = 1f;
+
+    [SerializeField, Range(0f, 2f)]
+    [Tooltip("转弯河道可调高此值，表现水流挤压外侧河岸；直道保持 0。")]
+    private float 弯道外岸冲击强度;
+
     private static readonly int FlowDirectionId = Shader.PropertyToID("_FlowDirection");
     private static readonly int FlowSpeedId = Shader.PropertyToID("_FlowSpeed");
     private static readonly int FloodArrivalProgressId = Shader.PropertyToID("_FloodArrivalProgress");
@@ -50,6 +71,11 @@ public sealed class RiverVisualController : MonoBehaviour
     private static readonly int ReverseAdvanceId = Shader.PropertyToID("_ReverseAdvance");
     private static readonly int FloodProgressId = Shader.PropertyToID("_FloodProgress");
     private static readonly int TurbidityId = Shader.PropertyToID("_Turbidity");
+    private static readonly int FloodWaveEnabledId = Shader.PropertyToID("_FloodWaveEnabled");
+    private static readonly int FloodWaveHeightId = Shader.PropertyToID("_FloodWaveHeight");
+    private static readonly int FloodWaveWidthId = Shader.PropertyToID("_FloodWaveWidth");
+    private static readonly int FloodWaveFoamStrengthId = Shader.PropertyToID("_FloodWaveFoamStrength");
+    private static readonly int OuterBankImpactStrengthId = Shader.PropertyToID("_OuterBankImpactStrength");
 
     private MaterialPropertyBlock 属性块;
 
@@ -84,6 +110,7 @@ public sealed class RiverVisualController : MonoBehaviour
 
     private void OnEnable()
     {
+        FloodWaveGridMeshProvider.确保使用高细分网格(河水渲染器);
         应用参数();
     }
 
@@ -119,6 +146,11 @@ public sealed class RiverVisualController : MonoBehaviour
         属性块.SetFloat(ReverseAdvanceId, 反向推进 ? 1f : 0f);
         属性块.SetFloat(FloodProgressId, 洪水扩张进度);
         属性块.SetFloat(TurbidityId, 浑浊程度);
+        属性块.SetFloat(FloodWaveEnabledId, 启用鼓起浪头 ? 1f : 0f);
+        属性块.SetFloat(FloodWaveHeightId, 浪头高度);
+        属性块.SetFloat(FloodWaveWidthId, 浪头宽度);
+        属性块.SetFloat(FloodWaveFoamStrengthId, 浪头水沫强度);
+        属性块.SetFloat(OuterBankImpactStrengthId, 弯道外岸冲击强度);
 
         河水渲染器.SetPropertyBlock(属性块);
     }

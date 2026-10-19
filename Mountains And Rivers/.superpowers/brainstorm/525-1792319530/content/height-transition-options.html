@@ -1,0 +1,69 @@
+<style>
+  .height-board { color:#292b25; font-family:"Microsoft YaHei","Noto Sans SC",sans-serif; }
+  .height-board h1 { margin:0 0 8px; font-size:26px; }
+  .height-board .lead { margin:0 0 18px; color:#65675e; line-height:1.65; }
+  .locked { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+  .locked span { padding:5px 9px; border-radius:20px; background:#eee9da; color:#5f6259; font-size:12px; }
+  .options { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
+  .option { position:relative; padding:12px; border:2px solid transparent; border-radius:15px; background:#f8f5ed; box-shadow:0 5px 18px rgba(54,54,44,.09); cursor:pointer; transition:.15s; }
+  .option:hover { transform:translateY(-2px); }
+  .option.selected { border-color:#62786f; box-shadow:0 6px 22px rgba(68,91,82,.18); }
+  .recommend { position:absolute; z-index:2; top:10px; right:10px; padding:3px 8px; border-radius:20px; color:#f7f1df; background:#566c63; font-size:11px; }
+  .scene { width:100%; height:204px; display:block; margin-bottom:12px; overflow:hidden; border-radius:10px; background:#eae4d3; }
+  .option h3 { margin:0 0 6px; font-size:17px; }
+  .option p { min-height:80px; margin:0; color:#66685f; font-size:13px; line-height:1.55; }
+  .legend { margin-top:16px; padding:12px 14px; border-left:4px solid #73867d; background:#f2efe5; color:#55584f; font-size:13px; line-height:1.65; }
+  @media(max-width:850px){.options{grid-template-columns:1fr}.option p{min-height:auto}}
+</style>
+
+<div class="height-board">
+  <h1>高低地块的侧面语言</h1>
+  <p class="lead">已采用 C「浅石青缓坡」。现在决定立体底座露出来的侧面，是像山体延伸、像规整台阶，还是像独立断崖。</p>
+  <div class="locked"><span>地面 #B8B28F</span><span>青灰 #7A8D7F</span><span>深石青 #4C6969</span><span>暖河岸 #C3B38E</span></div>
+
+  <div class="options">
+    <div class="option" data-choice="washed-slope" onclick="toggleSelect(this)">
+      <span class="recommend">推荐</span>
+      <svg class="scene" viewBox="0 0 320 204" preserveAspectRatio="none" aria-label="晕染缓坡">
+        <rect width="320" height="204" fill="#EAE4D3"/>
+        <path d="M0 35 L214 35 L269 74 L320 74 L320 204 L0 204Z" fill="#B8B28F"/>
+        <path d="M0 96 C45 89 83 91 119 82 C156 73 186 76 214 67 L269 105 C231 115 194 112 153 123 C104 137 52 124 0 137Z" fill="#7A8D7F" opacity=".76"/>
+        <path d="M0 138 C56 125 104 141 155 124 C205 107 241 122 320 101 L320 204 L0 204Z" fill="#4C6969" opacity=".72"/>
+        <path d="M211 35 L269 74 L269 84 L211 46Z" fill="#C3B38E"/>
+        <path d="M219 48 C229 60 235 77 231 98 C227 119 238 141 246 168" fill="none" stroke="#D6DDD5" stroke-width="9"/>
+        <path d="M219 48 C229 60 235 77 231 98 C227 119 238 141 246 168" fill="none" stroke="#7F9B97" stroke-width="4"/>
+      </svg>
+      <h3>A · 晕染缓坡</h3>
+      <p>大多数高差用连续斜坡，颜色从浅地面过渡到青灰坡脚。瀑布只在河道穿过坡面时出现，暖石岸沿着水口收边。</p>
+    </div>
+
+    <div class="option" data-choice="layered-terrace" onclick="toggleSelect(this)">
+      <svg class="scene" viewBox="0 0 320 204" preserveAspectRatio="none" aria-label="层叠台地">
+        <rect width="320" height="204" fill="#EAE4D3"/>
+        <path d="M0 34 H210 L266 68 H320 V204 H0Z" fill="#B8B28F"/>
+        <path d="M0 82 H225 L278 111 H320 V204 H0Z" fill="#8C947F"/>
+        <path d="M0 128 H244 L289 151 H320 V204 H0Z" fill="#667A73"/>
+        <path d="M0 169 H271 L308 184 H320 V204 H0Z" fill="#4C6969"/>
+        <path d="M210 34 L266 68" stroke="#C3B38E" stroke-width="7"/>
+        <path d="M225 82 L278 111" stroke="#C3B38E" stroke-width="5" opacity=".8"/>
+      </svg>
+      <h3>B · 层叠台地</h3>
+      <p>把高差拆成数层水平色带，地形读起来最清楚，也有卷轴层叠感；但容易强化“棋盘台阶”，削弱山体自然生长的感觉。</p>
+    </div>
+
+    <div class="option" data-choice="ink-cliff" onclick="toggleSelect(this)">
+      <svg class="scene" viewBox="0 0 320 204" preserveAspectRatio="none" aria-label="墨色断崖">
+        <rect width="320" height="204" fill="#EAE4D3"/>
+        <path d="M0 34 H218 L270 70 H320 V204 H0Z" fill="#B8B28F"/>
+        <path d="M0 78 C62 67 122 82 177 65 C201 58 218 57 237 68 L284 99 C252 104 230 115 214 144 C196 174 171 186 133 204 H0Z" fill="#566D69"/>
+        <path d="M0 112 C62 96 106 118 153 103 C191 91 211 84 247 92 C219 111 208 130 197 153 C185 178 163 191 135 204 H0Z" fill="#303A35" opacity=".82"/>
+        <path d="M218 34 L270 70" stroke="#C3B38E" stroke-width="8"/>
+        <path d="M228 48 C242 70 243 91 237 112 C230 136 242 158 255 180" fill="none" stroke="#D5DDD6" stroke-width="10"/>
+      </svg>
+      <h3>C · 墨色断崖</h3>
+      <p>侧面大面积压深，瀑布和轮廓冲击最强；适合峡谷或关键景观点，却不适合普遍使用，否则地图会显重、显碎。</p>
+    </div>
+  </div>
+
+  <div class="legend">建议体系：A 作为普通高差的常规语言；C 只作为瀑布、峡谷和关卡重点的特殊模块；B 不进入基础地块库。</div>
+</div>

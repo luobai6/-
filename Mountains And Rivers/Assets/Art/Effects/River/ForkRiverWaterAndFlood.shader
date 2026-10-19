@@ -30,6 +30,12 @@ Shader "ShanheWeijin/ForkRiverWaterAndFlood"
         _SmallRippleScale ("细波纹尺度", Range(2, 40)) = 14
         _RippleStrength ("波纹明暗强度", Range(0, 0.5)) = 0.12
         _FoamWidth ("岸边水沫宽度", Range(0.01, 0.5)) = 0.14
+        [Toggle] _FloodWaveEnabled ("启用鼓起洪水浪头", Float) = 1
+        _FloodWaveHeight ("浪头高度（局部空间）", Range(0, 1)) = 0.35
+        _FloodWaveWidth ("浪头前后宽度", Range(0.005, 0.2)) = 0.08
+        _FloodWaveFoamStrength ("浪头水沫强度", Range(0, 2)) = 1
+        _ForkImpactStrength ("三叉中心冲撞强度", Range(0, 2)) = 1
+        _ForkImpactHeightMultiplier ("三叉堆高倍数", Range(1, 2)) = 1.5
     }
 
     SubShader
@@ -51,7 +57,8 @@ Shader "ShanheWeijin/ForkRiverWaterAndFlood"
             Cull Off
 
             HLSLPROGRAM
-            #pragma target 2.0
+            // 顶点阶段需要读取多张推进图，因此使用 Shader Model 3.0。
+            #pragma target 3.0
             #pragma vertex Vert
             #pragma fragment Frag
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
@@ -66,6 +73,9 @@ Shader "ShanheWeijin/ForkRiverWaterAndFlood"
             {
                 float4 positionCS : SV_POSITION;
                 float2 uv : TEXCOORD0;
+                half waveBand : TEXCOORD1;
+                half impactBand : TEXCOORD2;
+                half waveNoise : TEXCOORD3;
             };
 
             TEXTURE2D(_ControlMap);
@@ -104,6 +114,12 @@ Shader "ShanheWeijin/ForkRiverWaterAndFlood"
                 half _SmallRippleScale;
                 half _RippleStrength;
                 half _FoamWidth;
+                half _FloodWaveEnabled;
+                half _FloodWaveHeight;
+                half _FloodWaveWidth;
+                half _FloodWaveFoamStrength;
+                half _ForkImpactStrength;
+                half _ForkImpactHeightMultiplier;
             CBUFFER_END
 
             float Hash21(float2 p)
@@ -135,11 +151,67 @@ Shader "ShanheWeijin/ForkRiverWaterAndFlood"
                 return timeMask * advanceData.a;
             }
 
+            half EvaluateWave(half4 advanceData, half progress)
+            {
+                half active = step(0.001h, progress)
+                            * (1.0h - step(0.999h, progress))
+                            * step(0.5h, _FloodWaveEnabled);
+                half distanceToFront = abs(advanceData.r - progress);
+                half band = saturate(1.0h - distanceToFront / max(_FloodWaveWidth, 0.001h));
+                band = band * band * (3.0h - 2.0h * band);
+                return band * advanceData.a * active;
+            }
+
             Varyings Vert(Attributes input)
             {
                 Varyings output;
-                output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
-                output.uv = TRANSFORM_TEX(input.uv, _ControlMap);
+                float2 uv = TRANSFORM_TEX(input.uv, _ControlMap);
+                half normalRiverMask = SAMPLE_TEXTURE2D_LOD(_ControlMap, sampler_ControlMap, uv, 0).r;
+                half4 northIn = SAMPLE_TEXTURE2D_LOD(_NorthInAdvanceMap, sampler_NorthInAdvanceMap, uv, 0);
+                half4 northOut = SAMPLE_TEXTURE2D_LOD(_NorthOutAdvanceMap, sampler_NorthOutAdvanceMap, uv, 0);
+                half4 eastIn = SAMPLE_TEXTURE2D_LOD(_EastInAdvanceMap, sampler_EastInAdvanceMap, uv, 0);
+                half4 eastOut = SAMPLE_TEXTURE2D_LOD(_EastOutAdvanceMap, sampler_EastOutAdvanceMap, uv, 0);
+                half4 southIn = SAMPLE_TEXTURE2D_LOD(_SouthInAdvanceMap, sampler_SouthInAdvanceMap, uv, 0);
+                half4 southOut = SAMPLE_TEXTURE2D_LOD(_SouthOutAdvanceMap, sampler_SouthOutAdvanceMap, uv, 0);
+
+                half northSelected = 1.0h - step(0.5h, _IncomingPort);
+                half eastSelected = step(0.5h, _IncomingPort) * (1.0h - step(1.5h, _IncomingPort));
+                half southSelected = step(1.5h, _IncomingPort);
+                half4 entryData = northIn * northSelected + eastIn * eastSelected + southIn * southSelected;
+
+                half entryWave = EvaluateWave(entryData, _EntryArrivalProgress);
+                half northWave = EvaluateWave(northOut, _NorthExitProgress) * (1.0h - northSelected);
+                half eastWave = EvaluateWave(eastOut, _EastExitProgress) * (1.0h - eastSelected);
+                half southWave = EvaluateWave(southOut, _SouthExitProgress) * (1.0h - southSelected);
+                half waveBand = max(entryWave, max(northWave, max(eastWave, southWave)));
+
+                // 入流到达中心后先堆高；任一出口开始推进时，堆高随分流逐渐回落。
+                half outgoingProgress = max(
+                    _NorthExitProgress * (1.0h - northSelected),
+                    max(_EastExitProgress * (1.0h - eastSelected), _SouthExitProgress * (1.0h - southSelected))
+                );
+                half impactEnvelope = smoothstep(0.78h, 1.0h, _EntryArrivalProgress)
+                                    * (1.0h - smoothstep(0.0h, 0.25h, outgoingProgress))
+                                    * step(0.5h, _FloodWaveEnabled)
+                                    * _ForkImpactStrength;
+                half centerMask = smoothstep(0.72h, 0.98h, entryData.r) * entryData.a;
+                half impactBand = saturate(centerMask * impactEnvelope);
+
+                half coarseNoise = ValueNoise(uv * 9.0 + _Time.y * float2(0.19, -0.13));
+                half fineNoise = ValueNoise(uv * 23.0 - _Time.y * float2(0.11, 0.17));
+                half waveNoise = saturate(0.48h + coarseNoise * 0.38h + fineNoise * 0.24h);
+                half brokenCrest = smoothstep(0.28h, 0.62h, waveNoise);
+                half finalWave = waveBand * normalRiverMask * brokenCrest;
+                half finalImpact = impactBand * normalRiverMask * (0.75h + waveNoise * 0.25h);
+
+                float3 displacedPosition = input.positionOS.xyz;
+                displacedPosition.y += finalWave * _FloodWaveHeight;
+                displacedPosition.y += finalImpact * _FloodWaveHeight * _ForkImpactHeightMultiplier;
+                output.positionCS = TransformObjectToHClip(displacedPosition);
+                output.uv = uv;
+                output.waveBand = finalWave;
+                output.impactBand = finalImpact;
+                output.waveNoise = waveNoise;
                 return output;
             }
 
@@ -203,11 +275,16 @@ Shader "ShanheWeijin/ForkRiverWaterAndFlood"
                 half foamMovement = saturate(largeRipple * 0.7h + 0.15h);
                 waterColor = lerp(waterColor, _FoamColor.rgb, edgeBand * foamMovement);
 
+                half crestFoam = saturate(input.waveBand * (0.72h + input.waveNoise * 0.45h) * _FloodWaveFoamStrength);
+                half impactFoam = saturate(input.impactBand * (0.65h + input.waveNoise * 0.55h) * _FloodWaveFoamStrength);
+                waterColor = lerp(waterColor, _FoamColor.rgb * 1.08h, saturate(crestFoam + impactFoam));
+
                 half wetBank = control.a * _FloodProgress * arrivalMask * (1.0h - normalRiverMask);
                 waterColor = lerp(waterColor, _FloodColor.rgb * 0.72h, wetBank * _Turbidity * 0.35h);
 
                 half alpha = waterMask * _Opacity;
                 alpha += edgeBand * foamMovement * 0.10h;
+                alpha += crestFoam * 0.28h + impactFoam * 0.34h;
                 clip(alpha - 0.002h);
                 return half4(waterColor, saturate(alpha));
             }

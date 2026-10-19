@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: "M_\u9752\u7EFF\u9876\u9762\u8D6D\u77F3\u4FA7\u9762_\u5706\u7F13\u5761\u80A9\u8BD5\u9A8C"
+  m_Shader: {fileID: 4800000, guid: 1e32dea82f146dc4994d1fb3484c0420, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _ShoulderToTopEnd: 0.94
+    - _ShoulderToTopStart: 0.68
+    - _SideGradientBottom: -0.25
+    - _SideGradientTop: 1
+    - _SideToShoulderEnd: 0.42
+    m_Colors:
+    - _ShoulderColor: {r: 0.569, g: 0.518, b: 0.416, a: 1}
+    - _SideBottomColor: {r: 0.765, g: 0.655, b: 0.482, a: 1}
+    - _SideColor: {r: 0.706, g: 0.576, b: 0.427, a: 1}
+    - _SideTopColor: {r: 0.557, g: 0.435, b: 0.314, a: 1}
+    - _TopColor: {r: 0.455, g: 0.541, b: 0.475, a: 1}
+  m_BuildTextureStacks: []

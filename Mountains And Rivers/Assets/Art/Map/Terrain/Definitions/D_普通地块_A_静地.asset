@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86665e9ac46000b4d9db0a7b7fa434ae, type: 3}
+  m_Name: "D_普通地块_A_静地"
+  m_EditorClassIdentifier: 
+  "中文名称": "普通地块_A_静地"
+  "白模颜色": {r: 0.93, g: 0.9, b: 0.82, a: 1}
+  "主要内容预制体": {fileID: 100000, guid: 5da0893ec6034dfa879e26497ab45c24, type: 3}

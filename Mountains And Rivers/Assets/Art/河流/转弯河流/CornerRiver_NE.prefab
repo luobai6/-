@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1453347692646801351}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.01, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 1
@@ -136,6 +136,11 @@ MonoBehaviour:
   "\u6C34\u5934\u8FB9\u7F18\u67D4\u548C\u5EA6": 0.04
   "\u6D2A\u6C34\u6269\u5F20\u8FDB\u5EA6": 0
   "\u6D51\u6D4A\u7A0B\u5EA6": 0.35
+  "\u542F\u7528\u9F13\u8D77\u6D6A\u5934": 1
+  "\u6D6A\u5934\u9AD8\u5EA6": 0.35
+  "\u6D6A\u5934\u5BBD\u5EA6": 0.08
+  "\u6D6A\u5934\u6C34\u6CAB\u5F3A\u5EA6": 1
+  "\u5F2F\u9053\u5916\u5CB8\u51B2\u51FB\u5F3A\u5EA6": 0.7
 --- !u!1 &5556138700350014591
 GameObject:
   m_ObjectHideFlags: 0
@@ -162,7 +167,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5556138700350014591}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.02, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 1
